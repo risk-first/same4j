@@ -1,0 +1,7 @@
+.project
+.classpath
+target/
+bindings/target
+identity/target
+.settings/
+pom.xml.versionsBackup
