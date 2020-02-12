@@ -65,8 +65,8 @@ public class TestDynamicBeanConverter {
 			SOMEBEAN_STREAM.reverse());
 	
 	static ReversibleFunction<FieldInstance, Map.Entry<String, Object>> FIELD_TO_MAP_ENTRY = Same.reversible(
-		fi -> Same.mapEntry(fi.f.getName(), fi.value),
-		me -> new FieldInstance(null, getField(me.getKey()), me.getValue()));
+		fi -> Same.mapEntry(fi.getField().getName(), fi.getValue()),
+		me -> Objects.fieldInstance(null, getField(me.getKey()), me.getValue()));
 
 	static ReversibleFunction<SomeBean, Map<String, Object>> SOMEBEAN_TO_MAP = 
 			Same.combine(SOMEBEAN_STREAM, 

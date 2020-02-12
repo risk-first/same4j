@@ -10,27 +10,21 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.riskfirst.same.same4j.Same4JDataException;
 import org.riskfirst.same.same4j.ReversibleFunction;
 import org.riskfirst.same.same4j.Same;
+import org.riskfirst.same.same4j.Same4JDataException;
 
 /**
  * Provides functionality to build/deconstruct java objects.
  */
 public class Objects {
 
-	public static class FieldInstance {
+	public static interface FieldInstance {
 		
-		public final Field f;
-		public final Object owner;
-		public final Object value;
-		
-		public FieldInstance(Object owner, Field f, Object value) {
-			super();
-			this.owner = owner;
-			this.f = f;
-			this.value = value;
-		}
+		public Object getOwner();
+		public Field getField();
+		public Object getValue();
+
 	}
 	
 	/**
@@ -45,13 +39,35 @@ public class Objects {
 			o -> inspector(o),rebuilder(constructor));
 	}
 	
+	public static FieldInstance fieldInstance(Object owner, Field f, Object value) {
+		
+		return new FieldInstance() {
+
+			@Override
+			public Object getOwner() {
+				return owner;
+			}
+
+			@Override
+			public Field getField() {
+				return f;
+			}
+
+			@Override
+			public Object getValue() {
+				return value;
+			}
+			
+		};
+	}
+	
 	protected static Stream<FieldInstance> inspector(Object o) {
 		return getClassStack(o).stream()
 			.flatMap(c -> Arrays.stream(c.getDeclaredFields()))
 			.map(f -> { 
 				try {
 					f.setAccessible(true);
-					return new FieldInstance(o, f, f.get(o));
+					return fieldInstance(o, f, f.get(o));
 				} catch (Exception e) {
 					throw new Same4JDataException("Couldn't inspect field: "+f, e);
 				}
@@ -78,10 +94,10 @@ public class Objects {
 				K out = con.get();
 				for (FieldInstance fi : a) {
 					try {
-						fi.f.setAccessible(true);
-						fi.f.set(out, fi.value);
+						fi.getField().setAccessible(true);
+						fi.getField().set(out, fi.getValue());
 					} catch (IllegalArgumentException | IllegalAccessException e) {
-						throw new Same4JDataException("Couldn't set field: "+fi.f, e);
+						throw new Same4JDataException("Couldn't set field: "+fi.getField(), e);
 					}
 				}
 				return out;
@@ -89,10 +105,10 @@ public class Objects {
 	}
 	
 	public static Predicate<FieldInstance> nonStatic() {
-		return fi -> !Modifier.isStatic(fi.f.getModifiers());
+		return fi -> !Modifier.isStatic(fi.getField().getModifiers());
 	}
 	
 	public static Predicate<FieldInstance> nonTransient() {
-		return fi -> !Modifier.isTransient(fi.f.getModifiers());
+		return fi -> !Modifier.isTransient(fi.getField().getModifiers());
 	}
 }
