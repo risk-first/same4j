@@ -46,12 +46,12 @@ public class TestCamelCaseConverter {
 		Assert.assertEquals("someExampleCamel", CAMEL_TO_UNDERSCORE.inverse("SOME_EXAMPLE_CAMEL"));
 	}
 	
-	@Test(expected = NonReversibleDataException.class)
+	@Test(expected = Same4JDataException.class)
 	public void testItBreaks() {
 		CAMEL_TO_UNDERSCORE.apply("THIS_WONT_WORK");
 	}
 	
-	@Test(expected = NonReversibleDataException.class)
+	@Test(expected = Same4JDataException.class)
 	public void testItBreaks2() {
 		CAMEL_TO_UNDERSCORE.inverse("THIS_will_FAIL");
 	}
@@ -61,7 +61,7 @@ public class TestCamelCaseConverter {
 		CAMEL_TO_UNDERSCORE.inverse(null);
 	}
 	
-	@Test(expected = NonReversibleDataException.class)
+	@Test(expected = Same4JDataException.class)
 	public void testEmptyString() {
 		CAMEL_TO_UNDERSCORE.inverse("");
 	}

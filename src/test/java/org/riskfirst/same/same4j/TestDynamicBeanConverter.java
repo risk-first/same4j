@@ -1,5 +1,7 @@
 package org.riskfirst.same.same4j;
 
+import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.junit.Assert;
@@ -61,6 +63,24 @@ public class TestDynamicBeanConverter {
 	static ReversibleFunction<SomeBean, SomeBean> SOMEBEAN_COPY = Same.combine(
 			SOMEBEAN_STREAM, 
 			SOMEBEAN_STREAM.reverse());
+	
+	static ReversibleFunction<FieldInstance, Map.Entry<String, Object>> FIELD_TO_MAP_ENTRY = Same.reversible(
+		fi -> Same.mapEntry(fi.f.getName(), fi.value),
+		me -> new FieldInstance(null, getField(me.getKey()), me.getValue()));
+
+	static ReversibleFunction<SomeBean, Map<String, Object>> SOMEBEAN_TO_MAP = 
+			Same.combine(SOMEBEAN_STREAM, 
+			Same.stream(FIELD_TO_MAP_ENTRY), 
+			Same.reverse(Same.mapToStream()));
+
+	public static Field getField(String name) {
+		try {
+			return SomeBean.class.getDeclaredField(name);
+		} catch (NoSuchFieldException | SecurityException e) {
+			throw new UnsupportedOperationException("Couldn't examine", e);
+		}
+	}
+			
 
 	@Test
 	public void testShallowCopy() {
@@ -71,5 +91,16 @@ public class TestDynamicBeanConverter {
 		Assert.assertEquals(sb1, sb2);
 		Assert.assertEquals(sb1.toString(), sb2.toString());
 		Assert.assertFalse(sb1==sb2);
+	}
+	
+	@Test
+	public void testBeanToMap() {
+		SomeBean sb1 = new SomeBean("karhot", 44, false);
+		Map<String, Object> map = SOMEBEAN_TO_MAP.apply(sb1);
+		System.out.println(sb1);
+		System.out.println(map);
+		
+		SomeBean sb2 = SOMEBEAN_TO_MAP.inverse(map);
+		Assert.assertEquals(sb1, sb2);
 	}
 }

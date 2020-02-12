@@ -8,41 +8,7 @@ public interface ReversibleFunction<T, R> extends Function<T, R>, Reversible {
 	public T inverse(R in);
 	
 	public default ReversibleFunction<T, R> guard(Predicate<T> domain, Predicate<R> range) {
-		
-		ReversibleFunction<T, R> orig = this;
-		
-		return new ReversibleMatchingFunction<T, R>() {
-
-			@Override
-			public R apply(T t) {
-				if (!domain.test(t)) {
-					throw new NonReversibleDataException("Failed domain check:"+t);
-				} else {
-					return orig.apply(t);
-				}
-			}
-
-			@Override
-			public T inverse(R in) {
-				if (!range.test(in)) {
-					throw new NonReversibleDataException("Failed range check:"+in);
-				} else {
-					return orig.inverse(in);
-				}
-			}
-
-			@Override
-			public Predicate<T> domain() {
-				return domain;
-			}
-
-			@Override
-			public Predicate<R> range() {
-				return range;
-			}
-			
-			
-		};
+		return Same.guard(this, domain, range);
 	}
 	
 	/**

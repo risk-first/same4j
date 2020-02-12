@@ -3,6 +3,7 @@ package org.riskfirst.same.same4j;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -81,6 +82,29 @@ public class Same {
 			Collectors.toMap(e -> e.getKey(), e -> e.getValue());
 		
 		return Same.stream(splitter, joiner);
+	}
+	
+	/**
+	 * Convenience method for creating immutable map entries
+	 */
+	public static <K, V> Map.Entry<K, V> mapEntry(K k, V v) {
+		return new Map.Entry<K, V>() {
+
+			@Override
+			public K getKey() {
+				return k;
+			}
+
+			@Override
+			public V getValue() {
+				return v;
+			}
+
+			@Override
+			public V setValue(V value) {
+				throw new UnsupportedOperationException();
+			}
+		};
 	}
 	
 	public static <V> ReversibleFunction<List<V>, Stream<V>> listToStream() {
@@ -175,6 +199,42 @@ public class Same {
 			public R inverse(T in) {
 				return orig.apply(in);
 			}
+		};
+	}
+	
+	public static <T, R> ReversibleMatchingFunction<T, R> guard(ReversibleFunction<T, R> orig, Predicate<T> domain, Predicate<R> range) {
+				
+		return new ReversibleMatchingFunction<T, R>() {
+
+			@Override
+			public R apply(T t) {
+				if (!domain.test(t)) {
+					throw new Same4JDataException("Failed domain check:"+t);
+				} else {
+					return orig.apply(t);
+				}
+			}
+
+			@Override
+			public T inverse(R in) {
+				if (!range.test(in)) {
+					throw new Same4JDataException("Failed range check:"+in);
+				} else {
+					return orig.inverse(in);
+				}
+			}
+
+			@Override
+			public Predicate<T> domain() {
+				return domain;
+			}
+
+			@Override
+			public Predicate<R> range() {
+				return range;
+			}
+			
+			
 		};
 	}
 	

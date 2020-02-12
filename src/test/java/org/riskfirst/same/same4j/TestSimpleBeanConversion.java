@@ -12,7 +12,7 @@ import org.junit.Test;
 public class TestSimpleBeanConversion {
 
 	public static class TestBean1 {
-		
+		 
 		Map<String, String> namesToAges = new HashMap<>();
 
 		@Override
@@ -118,32 +118,17 @@ public class TestSimpleBeanConversion {
 		EXAMPLE2.namesAndAges.add(new Tuple<String, Integer>("Fido", 6));
 	}
 	
-	static ReversibleFunction<String, Integer> STRING_TO_INTEGER = Same.reversible(
-		s -> (Integer) Integer.parseInt(s),
-		i -> i.toString())
-		.guard(s -> s.matches("^[-+]?\\d+$"), i -> true );
+	static ReversibleFunction<String, Integer> STRING_TO_INTEGER = Same.guard(
+		Same.reversible(
+			s -> Integer.parseInt(s),
+			i -> i.toString()),
+		s -> s.matches("^[-+]?\\d+$"), 
+		i -> true );
 	
 	
 	static ReversibleFunction<Map.Entry<String, String>, Tuple<String, Integer>> ENTRY_TO_TUPLE = Same.reversible(
 		e -> new Tuple<String, Integer>(e.getKey(), STRING_TO_INTEGER.apply(e.getValue())), 
-		t -> new Map.Entry<>() {
-
-			@Override
-			public String getKey() {
-				return t.a;
-			}
-
-			@Override
-			public String getValue() {
-				return STRING_TO_INTEGER.inverse(t.b);
-			}
-
-			@Override
-			public String setValue(String value) {
-				throw new UnsupportedOperationException();
-			}
-			
-		});
+		t -> Same.mapEntry(t.a, STRING_TO_INTEGER.inverse(t.b)));
 	
 	static ReversibleFunction<Stream<Map.Entry<String, String>>, Stream<Tuple<String, Integer>>> ENTRY_TO_TUPLE_STREAM = Same.stream(ENTRY_TO_TUPLE);
 	

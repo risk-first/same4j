@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.riskfirst.same.same4j.NonReversibleDataException;
+import org.riskfirst.same.same4j.Same4JDataException;
 import org.riskfirst.same.same4j.ReversibleFunction;
 import org.riskfirst.same.same4j.Same;
 
@@ -21,9 +21,9 @@ public class Objects {
 
 	public static class FieldInstance {
 		
-		final Field f;
-		final Object owner;
-		final Object value;
+		public final Field f;
+		public final Object owner;
+		public final Object value;
 		
 		public FieldInstance(Object owner, Field f, Object value) {
 			super();
@@ -53,7 +53,7 @@ public class Objects {
 					f.setAccessible(true);
 					return new FieldInstance(o, f, f.get(o));
 				} catch (Exception e) {
-					throw new NonReversibleDataException("Couldn't inspect field: "+f, e);
+					throw new Same4JDataException("Couldn't inspect field: "+f, e);
 				}
 			});
 	}
@@ -78,9 +78,10 @@ public class Objects {
 				K out = con.get();
 				for (FieldInstance fi : a) {
 					try {
+						fi.f.setAccessible(true);
 						fi.f.set(out, fi.value);
 					} catch (IllegalArgumentException | IllegalAccessException e) {
-						throw new NonReversibleDataException("Couldn't set field: "+fi.f, e);
+						throw new Same4JDataException("Couldn't set field: "+fi.f, e);
 					}
 				}
 				return out;
