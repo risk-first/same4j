@@ -1,4 +1,4 @@
-package org.riskfirst.same.same4j;
+package org.riskfirst.same.same4j.reversible;
 
 import java.util.function.Predicate;
 

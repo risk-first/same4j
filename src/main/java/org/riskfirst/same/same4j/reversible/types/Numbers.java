@@ -1,8 +1,8 @@
-package org.riskfirst.same.same4j.types;
+package org.riskfirst.same.same4j.reversible.types;
 
 import java.text.NumberFormat;
 
-import org.riskfirst.same.same4j.ReversibleFunction;
+import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 
 public class Numbers {
 

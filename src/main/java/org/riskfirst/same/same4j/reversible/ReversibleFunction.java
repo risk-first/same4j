@@ -1,4 +1,4 @@
-package org.riskfirst.same.same4j;
+package org.riskfirst.same.same4j.reversible;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -18,7 +18,7 @@ public interface ReversibleFunction<T, R> extends Function<T, R>, Reversible {
 	 * Doesn't always seem to compile correctly when called though.
 	 */
 	public default ReversibleFunction<T, R> guard(Predicate<T> domain, Predicate<R> range) {
-		return Same.guard(this, domain, range);
+		return Reversible.guard(this, domain, range);
 	}
 	
 	/**
@@ -34,7 +34,7 @@ public interface ReversibleFunction<T, R> extends Function<T, R>, Reversible {
 	 * Doesn't always seem to compile correctly when called though.
 	 */
 	public default <S> ReversibleFunction<T, S> append(ReversibleFunction<R, S> f) {
-		return Same.combine(this, f);
+		return Reversible.combine(this, f);
 	}
 	
 	/**
@@ -42,7 +42,7 @@ public interface ReversibleFunction<T, R> extends Function<T, R>, Reversible {
 	 * Doesn't always seem to compile correctly when called though.
 	 */
 	public default ReversibleFunction<R, T> reverse() {
-		return Same.reverse(this);
+		return Reversible.reverse(this);
 	}
 	
 }

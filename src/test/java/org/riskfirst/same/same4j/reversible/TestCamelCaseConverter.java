@@ -1,4 +1,4 @@
-package org.riskfirst.same.same4j;
+package org.riskfirst.same.same4j.reversible;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -6,22 +6,24 @@ import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.riskfirst.same.same4j.Same4JDataException;
+import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 
 public class TestCamelCaseConverter {
 	
-	static ReversibleFunction<String, Stream<CharSequence>> CAMEL_SPLITTER = Same.stream(
+	static ReversibleFunction<String, Stream<CharSequence>> CAMEL_SPLITTER = Reversible.stream(
 		s -> Arrays.stream(s.split("(?=\\p{Upper})")),
 		Collectors.joining(""));
 		
-	static ReversibleFunction<String, Stream<CharSequence>> UNDERSCORE_SPLITTER = Same.stream(
+	static ReversibleFunction<String, Stream<CharSequence>> UNDERSCORE_SPLITTER = Reversible.stream(
 		s -> Arrays.stream(s.split("(?=_)")) ,	// split but keep underscore
 		Collectors.joining());
 	
-	static ReversibleFunction<CharSequence, String> CASTER = Same.cast(CharSequence.class, String.class);
+	static ReversibleFunction<CharSequence, String> CASTER = Reversible.cast(CharSequence.class, String.class);
 	
 	// can reverse any individual word in the camel case
 	// nb, won't handle nulls or empty strings
-	static ReversibleFunction<String, String> CAMEL_TO_UNDERSCORE_WORD = Same.reversible(
+	static ReversibleFunction<String, String> CAMEL_TO_UNDERSCORE_WORD = Reversible.reversible(
 		s -> Character.isUpperCase(s.charAt(0)) ? "_" +s.toUpperCase() : s.toUpperCase(),
 		s -> s.startsWith("_") ? 
 				s.substring(1, 2).toUpperCase() + s.substring(2).toLowerCase() : 
@@ -30,8 +32,8 @@ public class TestCamelCaseConverter {
 	
 	public static ReversibleFunction<String, String> CAMEL_TO_UNDERSCORE = 
 		CAMEL_SPLITTER
-			.append(Same.stream(CASTER.append(CAMEL_TO_UNDERSCORE_WORD).append(Same.reverse(CASTER))))
-			.append(Same.reverse(UNDERSCORE_SPLITTER))
+			.append(Reversible.stream(CASTER.append(CAMEL_TO_UNDERSCORE_WORD).append(Reversible.reverse(CASTER))))
+			.append(Reversible.reverse(UNDERSCORE_SPLITTER))
 			.guard(
 				(x) -> x.matches("[a-z][A-Za-z0-9]*"),
 				(x) -> x.matches("[A-Z][A-Z_]*"));

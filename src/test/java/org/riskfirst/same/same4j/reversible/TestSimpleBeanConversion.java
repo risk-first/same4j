@@ -1,4 +1,4 @@
-package org.riskfirst.same.same4j;
+package org.riskfirst.same.same4j.reversible;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.riskfirst.same.same4j.atom.TypedAtom;
+import org.riskfirst.same.same4j.reversible.types.Collections;
 
 public class TestSimpleBeanConversion {
 
@@ -118,28 +120,28 @@ public class TestSimpleBeanConversion {
 		EXAMPLE2.namesAndAges.add(new Tuple<String, Integer>("Fido", 6));
 	}
 	
-	static ReversibleFunction<String, Integer> STRING_TO_INTEGER = Same.guard(
-		Same.reversible(
+	static ReversibleFunction<String, Integer> STRING_TO_INTEGER = Reversible.guard(
+		Reversible.reversible(
 			s -> Integer.parseInt(s),
 			i -> i.toString()),
 		s -> s.matches("^[-+]?\\d+$"), 
 		i -> true );
 	
 	
-	static ReversibleFunction<Map.Entry<String, String>, Tuple<String, Integer>> ENTRY_TO_TUPLE = Same.reversible(
-		e -> new Tuple<String, Integer>(e.getKey(), STRING_TO_INTEGER.apply(e.getValue())), 
-		t -> Same.mapEntry(t.a, STRING_TO_INTEGER.inverse(t.b)));
+	static ReversibleFunction<TypedAtom<String, String>, Tuple<String, Integer>> ENTRY_TO_TUPLE = Reversible.reversible(
+		e -> new Tuple<String, Integer>(e.getProperty(), STRING_TO_INTEGER.apply(e.getValue())), 
+		t -> TypedAtom.of(t.a, STRING_TO_INTEGER.inverse(t.b)));
 	
-	static ReversibleFunction<Stream<Map.Entry<String, String>>, Stream<Tuple<String, Integer>>> ENTRY_TO_TUPLE_STREAM = Same.stream(ENTRY_TO_TUPLE);
+	static ReversibleFunction<Stream<TypedAtom<String, String>>, Stream<Tuple<String, Integer>>> ENTRY_TO_TUPLE_STREAM = Reversible.stream(ENTRY_TO_TUPLE);
 	
-	static ReversibleFunction<Stream<Tuple<String, Integer>>, List<Tuple<String, Integer>>> TUPLE_STREAM_TO_LIST = Same.reverse(Same.listToStream());
+	static ReversibleFunction<Stream<Tuple<String, Integer>>, List<Tuple<String, Integer>>> TUPLE_STREAM_TO_LIST = Reversible.reverse(Collections.listToValueStream());
 			
-	static ReversibleFunction<Map<String, String>, List<Tuple<String, Integer>>> MAP_TO_LIST = Same.combine(
-			Same.mapToStream(),
+	static ReversibleFunction<Map<String, String>, List<Tuple<String, Integer>>> MAP_TO_LIST = Reversible.combine(
+			Collections.mapToStream(),
 			ENTRY_TO_TUPLE_STREAM,
 			TUPLE_STREAM_TO_LIST);
 	
-	static ReversibleFunction<TestBean1, TestBean2> TEST_BEAN_1_TO_2 = Same.reversible(
+	static ReversibleFunction<TestBean1, TestBean2> TEST_BEAN_1_TO_2 = Reversible.reversible(
 		tb1 -> { TestBean2 out = new TestBean2(); out.namesAndAges = MAP_TO_LIST.apply(tb1.namesToAges); return out; },
 		tb2 -> { TestBean1 out = new TestBean1(); out.namesToAges = MAP_TO_LIST.inverse(tb2.namesAndAges); return out; });
 	
