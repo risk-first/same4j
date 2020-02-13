@@ -10,6 +10,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.riskfirst.same.same4j.atom.TypedAtom;
 import org.riskfirst.same.same4j.reversible.types.Collections;
+import org.riskfirst.same.same4j.reversible.types.Maps;
+import org.riskfirst.same.same4j.reversible.types.Numbers;
+import org.riskfirst.same.same4j.reversible.types.Objects;
 
 public class TestSimpleBeanConversion {
 
@@ -120,24 +123,16 @@ public class TestSimpleBeanConversion {
 		EXAMPLE2.namesAndAges.add(new Tuple<String, Integer>("Fido", 6));
 	}
 	
-	static ReversibleFunction<String, Integer> STRING_TO_INTEGER = Reversible.guard(
-		Reversible.reversible(
-			s -> Integer.parseInt(s),
-			i -> i.toString()),
-		s -> s.matches("^[-+]?\\d+$"), 
-		i -> true );
-	
-	
 	static ReversibleFunction<TypedAtom<String, String>, Tuple<String, Integer>> ENTRY_TO_TUPLE = Reversible.reversible(
-		e -> new Tuple<String, Integer>(e.getProperty(), STRING_TO_INTEGER.apply(e.getValue())), 
-		t -> TypedAtom.of(t.a, STRING_TO_INTEGER.inverse(t.b)));
+		e -> new Tuple<String, Integer>(e.getProperty(), Numbers.STRING_TO_INTEGER.apply(e.getValue())), 
+		t -> TypedAtom.of(t.a, Numbers.STRING_TO_INTEGER.inverse(t.b)));
 	
 	static ReversibleFunction<Stream<TypedAtom<String, String>>, Stream<Tuple<String, Integer>>> ENTRY_TO_TUPLE_STREAM = Reversible.stream(ENTRY_TO_TUPLE);
 	
 	static ReversibleFunction<Stream<Tuple<String, Integer>>, List<Tuple<String, Integer>>> TUPLE_STREAM_TO_LIST = Reversible.reverse(Collections.listToValueStream());
 			
 	static ReversibleFunction<Map<String, String>, List<Tuple<String, Integer>>> MAP_TO_LIST = Reversible.combine(
-			Collections.mapToStream(),
+			Maps.mapToStream(),
 			ENTRY_TO_TUPLE_STREAM,
 			TUPLE_STREAM_TO_LIST);
 	
@@ -162,5 +157,11 @@ public class TestSimpleBeanConversion {
 	
 		Assert.assertEquals(tb1, tb1b);
 		Assert.assertEquals(tb2, tb2b);
+	}
+	
+	@Test
+	public void testEmptyBeans() {
+		Assert.assertNull(Objects.existence(TestBean1::new, TestBean2::new).apply(null));
+		Assert.assertTrue(Objects.existence(TestBean1::new, TestBean2::new).apply(new TestBean1()) instanceof TestBean2);
 	}
 }

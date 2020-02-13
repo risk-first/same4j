@@ -13,7 +13,8 @@ import org.riskfirst.same.same4j.atom.FieldAtom;
 import org.riskfirst.same.same4j.atom.IntAtom;
 import org.riskfirst.same.same4j.atom.TypedAtom;
 import org.riskfirst.same.same4j.reversible.types.Collections;
-import org.riskfirst.same.same4j.reversible.types.Fields;
+import org.riskfirst.same.same4j.reversible.types.Maps;
+import org.riskfirst.same.same4j.reversible.types.Objects;
 
 public class TestDynamicBeanConverter {
 	
@@ -51,6 +52,13 @@ public class TestDynamicBeanConverter {
 		public String toString() {
 			return "Table [columnNames=" + columnNames + ", values=" + values + "]";
 		}
+
+		public Table(List<String> columnNames, List<List<Object>> values) {
+			super();
+			this.columnNames = columnNames;
+			this.values = values;
+		}
+		
 		
 	}
 
@@ -101,7 +109,7 @@ public class TestDynamicBeanConverter {
 	}
 	
 	static ReversibleFunction<SomeBean, Stream<FieldAtom>> SOMEBEAN_STREAM = 
-		Fields.fieldStream(Fields.nonStatic(), SomeBean::new);
+		Objects.fieldStream(Objects.nonStatic(), SomeBean::new);
 
 	static ReversibleFunction<SomeBean, SomeBean> SOMEBEAN_COPY = Reversible.combine(
 			SOMEBEAN_STREAM, 
@@ -115,7 +123,7 @@ public class TestDynamicBeanConverter {
 			Reversible.combine(
 					SOMEBEAN_STREAM, 
 					Reversible.stream(FIELD_TO_MAP_ENTRY), 
-					Reversible.reverse(Collections.mapToStream()));
+					Reversible.reverse(Maps.mapToStream()));
 
 	public static Field getField(String name) {
 		try {
@@ -155,52 +163,58 @@ public class TestDynamicBeanConverter {
 			fi -> IntAtom.of(columns.indexOf(fi.getProperty().getName()), fi.getValue()),
 			da -> FieldAtom.of(null, getField(columns.get(da.getProperty())), da.getValue()));
 	}
-			
-//	
-//	static ReversibleFunction<List<SomeBean>, List<List<Object>>> beansToTable(List<String> columns) {
-//		
-//		return Reversible.combine(
-//			SOMEBEAN_STREAM, 
-//			Reversible.stream(namesToOrdinalFields(columns)),
-//			Collections.listToAtomStream(() -> new SomeBean())
-//				
-//
-//		
-//	}
-//		Same.combine(
-//			Same.st
-
 	
+	// single bean to List
+	ReversibleFunction<SomeBean, List<Object>> beanToList(List<String> columns) {
+		return Reversible.combine(
+			SOMEBEAN_STREAM, 
+			Reversible.stream(namesToOrdinalFields(columns)),
+			Reversible.reverse(Collections.listToAtomStream(
+				() -> new ArrayList<Object>())));
+		
+	}
+	
+	ReversibleFunction<List<SomeBean>, List<List<Object>>> beansToListList(List<String> columns) {
+		return Reversible.combine(
+			Collections.listToValueStream(),
+			Reversible.stream(beanToList(columns)),
+			Reversible.reverse(Collections.listToValueStream()));
+	}
+		
+	ReversibleFunction<List<SomeBean>, Table> beansToTable(List<String> columns) {
+		
+		return Reversible.reversible(
+				lsb -> new Table(columns, beansToListList(columns).apply(lsb)),
+				t -> beansToListList(columns).inverse(t.values));
+	}
+
 	@Test
-	public void testBeansToLists() {
+	public void testBeansToTable() {
 		SomeBean abc = new SomeBean("abc", 44, false);
 		SomeBean def = new SomeBean("def", 22, true);
 		SomeBean ghi = new SomeBean("ghi", 11, false);
 		
 		// single bean to FieldAtoms
+		System.out.println("Fields: ");
 		SOMEBEAN_STREAM.apply(abc).forEach(c -> System.out.println(c));
 		
 		// single bean to IntAtoms
+		System.out.println("Ordinals: ");
 		Reversible.combine(SOMEBEAN_STREAM, Reversible.stream(namesToOrdinalFields(columns)))
 			.apply(abc).forEach(c -> System.out.println(c));
 		
-		// single bean to List
-		ReversibleFunction<SomeBean, List<Object>> beanToList = Reversible.combine(
-				SOMEBEAN_STREAM, 
-				Reversible.stream(namesToOrdinalFields(columns)),
-				Reversible.reverse(Collections.listToAtomStream(
-					() -> new ArrayList<Object>())));
-		
-		System.out.println(beanToList.apply(abc));
+		System.out.println("Single Bean: \n" + beanToList(columns).apply(abc));
 		
 		// now wrap it to do the whole table.
 		List<SomeBean> beans = Arrays.asList(abc,def,ghi);
+		System.out.println("All Beans: \n" + beansToListList(columns).apply(beans));
 		
-		ReversibleFunction<List<SomeBean>, List<List<Object>>> beansToTable = Reversible.combine(
-			Collections.listToValueStream(),
-			Reversible.stream(beanToList),
-			Reversible.reverse(Collections.listToValueStream()));
+		// now the whole table
+		Table out = beansToTable(columns).apply(beans);
+		System.out.println(out);
 		
-		System.out.println(beansToTable.apply(beans));
+		List<SomeBean> beansBack = beansToTable(columns).inverse(out);
+		Assert.assertEquals(beansBack, beans);
 	}
+	
 }

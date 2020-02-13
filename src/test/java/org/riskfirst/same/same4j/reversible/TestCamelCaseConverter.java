@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.riskfirst.same.same4j.Same4JDataException;
+import org.riskfirst.same.same4j.Same4JException;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 
 public class TestCamelCaseConverter {
@@ -48,12 +48,12 @@ public class TestCamelCaseConverter {
 		Assert.assertEquals("someExampleCamel", CAMEL_TO_UNDERSCORE.inverse("SOME_EXAMPLE_CAMEL"));
 	}
 	
-	@Test(expected = Same4JDataException.class)
+	@Test(expected = Same4JException.class)
 	public void testItBreaks() {
 		CAMEL_TO_UNDERSCORE.apply("THIS_WONT_WORK");
 	}
 	
-	@Test(expected = Same4JDataException.class)
+	@Test(expected = Same4JException.class)
 	public void testItBreaks2() {
 		CAMEL_TO_UNDERSCORE.inverse("THIS_will_FAIL");
 	}
@@ -63,7 +63,7 @@ public class TestCamelCaseConverter {
 		CAMEL_TO_UNDERSCORE.inverse(null);
 	}
 	
-	@Test(expected = Same4JDataException.class)
+	@Test(expected = Same4JException.class)
 	public void testEmptyString() {
 		CAMEL_TO_UNDERSCORE.inverse("");
 	}

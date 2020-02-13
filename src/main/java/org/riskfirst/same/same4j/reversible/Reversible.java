@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.riskfirst.same.same4j.Same4JDataException;
+import org.riskfirst.same.same4j.Same4JException;
 
 /**
  * Marker interface for all reversible computations.
@@ -131,7 +131,7 @@ public interface Reversible {
 			@Override
 			public R apply(T t) {
 				if (!domain.test(t)) {
-					throw new Same4JDataException("Failed domain check:"+t);
+					throw new Same4JException("Failed domain check:"+t);
 				} else {
 					return orig.apply(t);
 				}
@@ -140,7 +140,7 @@ public interface Reversible {
 			@Override
 			public T inverse(R in) {
 				if (!range.test(in)) {
-					throw new Same4JDataException("Failed range check:"+in);
+					throw new Same4JException("Failed range check:"+in);
 				} else {
 					return orig.inverse(in);
 				}

@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.riskfirst.same.same4j.Same4JDataException;
+import org.riskfirst.same.same4j.Same4JException;
 import org.riskfirst.same.same4j.atom.FieldAtom;
 import org.riskfirst.same.same4j.reversible.Reversible;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
@@ -17,8 +17,47 @@ import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 /**
  * Provides functionality to build/deconstruct java objects.
  */
-public class Fields {
+public class Objects {
+	
+	/**
+	 * Identity relationship, where the in matches the out.
+	 */
+	public static <A> ReversibleFunction<A, A> identity() {
+		return Reversible.reversible(
+			a -> a,
+			b -> b);
+	}
 
+	/**
+	 * Returns an object if there is one present, otherwise returns null.
+	 */
+	public static <A, B> ReversibleFunction<A, B> existence(
+			Supplier<A> ca, 
+			Supplier<B> cb) {
+		
+		return Reversible.reversible(
+			a -> a != null ? cb.get() : null,
+			b -> b != null ? ca.get() : null);
+	}
+	
+	/**
+	 * Tries to create a copy of the object using no-args constructors
+	 */
+	public static <A, B> ReversibleFunction<A, B> shallow(Class<?> a, Class<?> b) {
+		return existence(
+				() -> newInstanceNoArgs(a), 
+				() -> newInstanceNoArgs(b));
+	}
+
+	@SuppressWarnings("unchecked")
+	protected static <A> A newInstanceNoArgs(Class<?> a) {
+		try {
+			return (A)  a.getConstructor().newInstance();
+		} catch (Exception e) {
+			throw new Same4JException("Couldn't contruct "+a, e);
+		}
+	}
+	
 	/**
 	 * This knows how to turn the fields of an object into a stream of {@link FieldAtom}s,
 	 * and also reconstruct those into a shallow copy of the original object.
@@ -32,21 +71,20 @@ public class Fields {
 	}
 	
 	protected static Stream<FieldAtom> inspector(Object o) {
-		return getClassStack(o).stream()
+		return getClassStack(o.getClass()).stream()
 			.flatMap(c -> Arrays.stream(c.getDeclaredFields()))
 			.map(f -> { 
 				try {
 					f.setAccessible(true);
 					return FieldAtom.of(o, f, f.get(o));
 				} catch (Exception e) {
-					throw new Same4JDataException("Couldn't inspect field: "+f, e);
+					throw new Same4JException("Couldn't inspect field: "+f, e);
 				}
 			});
 	}
 	
-	protected static List<Class<?>> getClassStack(Object o) {
+	protected static List<Class<?>> getClassStack(Class<?> current) {
 		List<Class<?>> out = new ArrayList<>();
-		Class<?> current = o.getClass();
 		while ((current != null) && (current != Object.class)) {
 			out.add(current);
 			current = current.getSuperclass();
@@ -63,7 +101,7 @@ public class Fields {
 					fi.getProperty().setAccessible(true);
 					fi.getProperty().set(out, fi.getValue());
 				} catch (IllegalArgumentException | IllegalAccessException e) {
-					throw new Same4JDataException("Couldn't set field: "+fi.getProperty(), e);
+					throw new Same4JException("Couldn't set field: "+fi.getProperty(), e);
 				}
 			}
 		

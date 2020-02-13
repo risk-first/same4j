@@ -2,7 +2,6 @@ package org.riskfirst.same.same4j.reversible.types;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
@@ -12,7 +11,6 @@ import java.util.stream.Stream;
 
 import org.riskfirst.same.same4j.atom.Atom;
 import org.riskfirst.same.same4j.atom.IntAtom;
-import org.riskfirst.same.same4j.atom.TypedAtom;
 import org.riskfirst.same.same4j.reversible.Reversible;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 
@@ -23,22 +21,6 @@ public class Collections {
 		return Reversible.stream(m -> m.stream(), Collectors.toList());
 	}
 
-	/**
-	 * A specific version of the above that breaks maps into atoms 
-	 * and reassembles them.  This doesn't care about the type of map.  
-	 */
-	public static <K, V> ReversibleFunction<Map<K, V>, Stream<TypedAtom<K, V>>> mapToStream() {
-		
-		Function<Map<K, V>, Stream<TypedAtom<K, V>>> splitter = m -> m.entrySet()
-			.stream()
-			.map(e -> TypedAtom.of(null, e.getKey(), e.getValue()));
-		
-		Collector<TypedAtom<K, V>, ?, Map<K, V>> joiner = 
-			Collectors.toMap(e -> e.getProperty(), e -> e.getValue());
-		
-		return Reversible.stream(splitter, joiner);
-	}
-	
 	/**
 	 * Helper class that collects together all atoms for assembling into an object.
 	 */
