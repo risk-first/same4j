@@ -27,7 +27,7 @@ public class BBInvariant<A, B> extends AbstractInvariant<A, B> {
 		try {
 			return bb.subclass(ca)
 					.name(ca.getName()+"Invariant")
-					//.method(ElementMatchers.any()).intercept(createInvariantImplementation(ca))
+					.method(ElementMatchers.any()).intercept(createInvariantImplementation(ca))
 					.make()
 					.load(getClass().getClassLoader())
 					.getLoaded()

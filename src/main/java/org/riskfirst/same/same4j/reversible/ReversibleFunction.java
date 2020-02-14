@@ -45,4 +45,17 @@ public interface ReversibleFunction<T, R> extends Function<T, R>, Reversible {
 		return Reversible.reverse(this);
 	}
 	
+	/**
+	 * Says whether apply() will work for its argument.
+	 */
+	public default Predicate<T> domain() {
+		return o -> true;
+	}
+	
+	/**
+	 * Says whether inverse() will work for its argument.
+	 */
+	public default Predicate<R> range() {
+		return o -> true; 
+	}
 }

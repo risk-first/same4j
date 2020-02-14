@@ -124,9 +124,9 @@ public interface Reversible {
 		};
 	}
 
-	static <T, R> ReversibleMatchingFunction<T, R> guard(ReversibleFunction<T, R> orig, Predicate<T> domain, Predicate<R> range) {
+	static <T, R> ReversibleFunction<T, R> guard(ReversibleFunction<T, R> orig, Predicate<T> domain, Predicate<R> range) {
 				
-		return new ReversibleMatchingFunction<T, R>() {
+		return new ReversibleFunction<T, R>() {
 	
 			@Override
 			public R apply(T t) {
@@ -155,8 +155,6 @@ public interface Reversible {
 			public Predicate<R> range() {
 				return range;
 			}
-			
-			
 		};
 	}
 
