@@ -123,7 +123,7 @@ public class TestSimpleBeanConversion {
 		EXAMPLE2.namesAndAges.add(new Tuple<String, Integer>("Fido", 6));
 	}
 	
-	static ReversibleFunction<TypedAtom<String, String>, Tuple<String, Integer>> ENTRY_TO_TUPLE = Reversible.reversible(
+	static ReversibleFunction<TypedAtom<String, String>, Tuple<String, Integer>> ENTRY_TO_TUPLE = Reversible.of(
 		e -> new Tuple<String, Integer>(e.getProperty(), Numbers.STRING_TO_INTEGER.apply(e.getValue())), 
 		t -> TypedAtom.of(t.a, Numbers.STRING_TO_INTEGER.inverse(t.b)));
 	
@@ -136,7 +136,7 @@ public class TestSimpleBeanConversion {
 			ENTRY_TO_TUPLE_STREAM,
 			TUPLE_STREAM_TO_LIST);
 	
-	static ReversibleFunction<TestBean1, TestBean2> TEST_BEAN_1_TO_2 = Reversible.reversible(
+	static ReversibleFunction<TestBean1, TestBean2> TEST_BEAN_1_TO_2 = Reversible.of(
 		tb1 -> { TestBean2 out = new TestBean2(); out.namesAndAges = MAP_TO_LIST.apply(tb1.namesToAges); return out; },
 		tb2 -> { TestBean1 out = new TestBean1(); out.namesToAges = MAP_TO_LIST.inverse(tb2.namesAndAges); return out; });
 	

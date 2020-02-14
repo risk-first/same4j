@@ -27,6 +27,11 @@ public class TestNumberConverter {
 		ReversibleFunction<String, Number> c = Numbers.stringToNumber(formatter);
 		Assert.assertEquals((Double) 54583.2, (Double) c.apply("54,583.2"));
 		Assert.assertEquals("-548,473", c.inverse(-548473));
-		
+	}
+	
+	@Test(expected =  NumberFormatException.class)
+	public void testFailingConversion() {
+		Assert.assertFalse(Numbers.STRING_TO_INTEGER.domain().test("sad"));
+		Numbers.STRING_TO_INTEGER.apply("asd");
 	}
 }

@@ -23,7 +23,7 @@ public class TestCamelCaseConverter {
 	
 	// can reverse any individual word in the camel case
 	// nb, won't handle nulls or empty strings
-	static ReversibleFunction<String, String> CAMEL_TO_UNDERSCORE_WORD = Reversible.reversible(
+	static ReversibleFunction<String, String> CAMEL_TO_UNDERSCORE_WORD = Reversible.of(
 		s -> Character.isUpperCase(s.charAt(0)) ? "_" +s.toUpperCase() : s.toUpperCase(),
 		s -> s.startsWith("_") ? 
 				s.substring(1, 2).toUpperCase() + s.substring(2).toLowerCase() : 
@@ -34,9 +34,10 @@ public class TestCamelCaseConverter {
 		CAMEL_SPLITTER
 			.append(Reversible.stream(CASTER.append(CAMEL_TO_UNDERSCORE_WORD).append(Reversible.reverse(CASTER))))
 			.append(Reversible.reverse(UNDERSCORE_SPLITTER))
-			.guard(
+			.allows(
 				(x) -> x.matches("[a-z][A-Za-z0-9]*"),
-				(x) -> x.matches("[A-Z][A-Z_]*"));
+				(x) -> x.matches("[A-Z][A-Z_]*"))
+			.guard();
 	
 	@Test
 	public void testCamelCaseToUnderscoreCase() {

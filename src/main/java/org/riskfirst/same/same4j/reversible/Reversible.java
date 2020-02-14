@@ -15,7 +15,10 @@ import org.riskfirst.same.same4j.Same4JException;
  */
 public interface Reversible {
 
-	static <T, R> ReversibleFunction<T, R> reversible(
+	/**
+	 * Builds a reversible function.
+	 */
+	public static <T, R> ReversibleFunction<T, R> of(
 		Function<T, R> out,
 		Function<R, T> back) {
 		
@@ -30,6 +33,16 @@ public interface Reversible {
 			public T inverse(R in) {
 				return back.apply(in);
 			}
+
+			@Override
+			public Predicate<T> domain() {
+				return t -> true;
+			}
+
+			@Override
+			public Predicate<R> range() {
+				return t -> true;
+			}
 		};
 		
 	}
@@ -37,7 +50,7 @@ public interface Reversible {
 	/**
 	 * Handles conversion with an intermediate representation.
 	 */
-	static <T, R, I> ReversibleFunction<T, R> combine(
+	public static <T, R, I> ReversibleFunction<T, R> combine(
 		ReversibleFunction<T, I> inSplitter,
 		ReversibleFunction<I, R> outSplitter) {
 		
@@ -52,13 +65,25 @@ public interface Reversible {
 			public T inverse(R in) {
 				return inSplitter.inverse(outSplitter.inverse(in));
 			}
+
+			@Override
+			public Predicate<T> domain() {
+				return inSplitter.domain();
+			}
+
+			@Override
+			public Predicate<R> range() {
+				return outSplitter.range();
+			}
 		};
 	}
+	
+	
 
 	/*
 	 * Handles conversion with an intermediate representation.
 	 */
-	static <T, R, I, J> ReversibleFunction<T, R> combine(
+	public static <T, R, I, J> ReversibleFunction<T, R> combine(
 		ReversibleFunction<T, I> inSplitter,
 		ReversibleFunction<I, J> midSplitter,
 		ReversibleFunction<J, R> outSplitter) {
@@ -74,10 +99,22 @@ public interface Reversible {
 			public T inverse(R in) {
 				return inSplitter.inverse(midSplitter.inverse(outSplitter.inverse(in)));
 			}
+			
+
+			@Override
+			public Predicate<T> domain() {
+				return inSplitter.domain();
+			}
+
+			@Override
+			public Predicate<R> range() {
+				return outSplitter.range();
+			}
+			
 		};
 	}
 
-	static <T, R> ReversibleFunction<T, R> cast(Class<T> from, Class<R> to) {
+	public static <T, R> ReversibleFunction<T, R> cast(Class<T> from, Class<R> to) {
 		
 		return new ReversibleFunction<T, R>() {
 	
@@ -101,6 +138,17 @@ public interface Reversible {
 				}
 			}
 			
+
+			@Override
+			public Predicate<T> domain() {
+				return t -> from.isAssignableFrom(t.getClass());
+			}
+
+			@Override
+			public Predicate<R> range() {
+				return r -> to.isAssignableFrom(r.getClass());
+			}
+			
 			
 		};
 	}
@@ -108,7 +156,7 @@ public interface Reversible {
 	/**
 	 * Reverses the whole function, so that inverse and apply have the opposite meanings.
 	 */
-	static <T, R> ReversibleFunction<R, T> reverse(ReversibleFunction<T, R> orig) {
+	public static <T, R> ReversibleFunction<R, T> reverse(ReversibleFunction<T, R> orig) {
 				
 		return new ReversibleFunction<R, T>() {
 	
@@ -121,29 +169,34 @@ public interface Reversible {
 			public R inverse(T in) {
 				return orig.apply(in);
 			}
+
+			@Override
+			public Predicate<R> domain() {
+				return orig.range();
+			}
+
+			@Override
+			public Predicate<T> range() {
+				return orig.domain();
+			}
 		};
 	}
 
-	static <T, R> ReversibleFunction<T, R> guard(ReversibleFunction<T, R> orig, Predicate<T> domain, Predicate<R> range) {
+	/**
+	 * Sets the domain and range for the reversible function.
+	 */
+	public static <T, R> ReversibleFunction<T, R> allows(ReversibleFunction<T, R> orig, Predicate<T> domain, Predicate<R> range) {
 				
 		return new ReversibleFunction<T, R>() {
 	
 			@Override
 			public R apply(T t) {
-				if (!domain.test(t)) {
-					throw new Same4JException("Failed domain check:"+t);
-				} else {
-					return orig.apply(t);
-				}
+				return orig.apply(t);
 			}
 	
 			@Override
 			public T inverse(R in) {
-				if (!range.test(in)) {
-					throw new Same4JException("Failed range check:"+in);
-				} else {
-					return orig.inverse(in);
-				}
+				return orig.inverse(in);
 			}
 	
 			@Override
@@ -157,11 +210,50 @@ public interface Reversible {
 			}
 		};
 	}
+	
+	/**
+	 * Checks the domain/range of the function before calling.
+	 */
+	public static <T, R> ReversibleFunction<T, R> guard(ReversibleFunction<T, R> orig) {
+		
+		return new ReversibleFunction<T, R>() {
+
+			@Override
+			public R apply(T t) {
+				if (orig.domain().test(t)) {
+					return orig.apply(t);
+				} else {
+					throw new Same4JException("Not within domain: "+t);
+				}
+			}
+
+			@Override
+			public T inverse(R in) {
+				if (orig.range().test(in)) {
+					return orig.inverse(in);
+				} else {
+					throw new Same4JException("Not within range: "+in);
+				}
+			}
+
+			@Override
+			public Predicate<T> domain() {
+				return orig.domain();
+			}
+
+			@Override
+			public Predicate<R> range() {
+				return orig.range();
+			}
+			
+			
+		};
+	}
 
 	/**
 	 * A reversible function that converts to a stream and back again.
 	 */
-	static <T, A, R> ReversibleFunction<T, Stream<R>> stream(
+	public static <T, A, R> ReversibleFunction<T, Stream<R>> stream(
 			Function<T, Stream<R>> splitter, 
 			Collector<R, A, T> joiner) {
 		
@@ -176,6 +268,16 @@ public interface Reversible {
 			public T inverse(Stream<R> in) {
 				return in.collect(joiner);
 			}
+
+			@Override
+			public Predicate<T> domain() {
+				return t -> true;
+			}
+
+			@Override
+			public Predicate<Stream<R>> range() {
+				return t -> true;
+			}
 		};		
 	}
 
@@ -183,7 +285,7 @@ public interface Reversible {
 	 * Turns a reversible function that applies to individual elements into 
 	 * one that works on streams.
 	 */
-	static <T, R> ReversibleFunction<Stream<T>, Stream<R>> stream(
+	public static <T, R> ReversibleFunction<Stream<T>, Stream<R>> stream(
 		ReversibleFunction<T, R> wrap) {
 		
 		return new ReversibleFunction<Stream<T>, Stream<R>>() {
@@ -197,7 +299,26 @@ public interface Reversible {
 			public Stream<T> inverse(Stream<R> in) {
 				return in.map(o -> wrap.inverse(o));
 			}
+
+			@Override
+			public Predicate<Stream<T>> domain() {
+				return t -> true;
+			}
+
+			@Override
+			public Predicate<Stream<R>> range() {
+				return t -> true;
+			}
 		};	
+	}
+	
+	public static <T, R> ReversibleFunction<T, R> combine(
+		ReversibleFunction<T, R> start,
+		ReversibleConsumer<T, R> then) {
+			
+		return start;
+		
+		
 	}
  
 }

@@ -9,16 +9,15 @@ import java.util.function.Predicate;
  * 
  * @author robmoffat
  */
-public interface ReversibleFunction<T, R> extends Function<T, R>, Reversible {
+public interface ReversibleFunction<T, R> extends Function<T, R> {
 
-	public T inverse(R in);
+	public T inverse(R r);
 	
 	/**
-	 * Short-hand for Same.guard. 
-	 * Doesn't always seem to compile correctly when called though.
+	 * Short-hand for {@link Reversible.include}
 	 */
-	public default ReversibleFunction<T, R> guard(Predicate<T> domain, Predicate<R> range) {
-		return Reversible.guard(this, domain, range);
+	public default ReversibleFunction<T, R> allows(Predicate<T> domain, Predicate<R> range) {
+		return Reversible.allows(this, domain, range);
 	}
 	
 	/**
@@ -48,14 +47,14 @@ public interface ReversibleFunction<T, R> extends Function<T, R>, Reversible {
 	/**
 	 * Says whether apply() will work for its argument.
 	 */
-	public default Predicate<T> domain() {
-		return o -> true;
-	}
+	public Predicate<T> domain();
 	
 	/**
 	 * Says whether inverse() will work for its argument.
 	 */
-	public default Predicate<R> range() {
-		return o -> true; 
+	public Predicate<R> range();
+
+	public default ReversibleFunction<T, R> guard() {
+		return Reversible.guard(this);
 	}
 }
