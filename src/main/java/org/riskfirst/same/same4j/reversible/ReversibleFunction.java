@@ -47,12 +47,16 @@ public interface ReversibleFunction<T, R> extends Function<T, R> {
 	/**
 	 * Says whether apply() will work for its argument.
 	 */
-	public Predicate<T> domain();
+	public default Predicate<T> domain() {
+		return t -> true;
+	}
 	
 	/**
 	 * Says whether inverse() will work for its argument.
 	 */
-	public Predicate<R> range();
+	public default Predicate<R> range() {
+		return t -> true;
+	}
 
 	public default ReversibleFunction<T, R> guard() {
 		return Reversible.guard(this);

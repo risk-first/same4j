@@ -33,16 +33,6 @@ public interface Reversible {
 			public T inverse(R in) {
 				return back.apply(in);
 			}
-
-			@Override
-			public Predicate<T> domain() {
-				return t -> true;
-			}
-
-			@Override
-			public Predicate<R> range() {
-				return t -> true;
-			}
 		};
 		
 	}
@@ -268,16 +258,6 @@ public interface Reversible {
 			public T inverse(Stream<R> in) {
 				return in.collect(joiner);
 			}
-
-			@Override
-			public Predicate<T> domain() {
-				return t -> true;
-			}
-
-			@Override
-			public Predicate<Stream<R>> range() {
-				return t -> true;
-			}
 		};		
 	}
 
@@ -298,16 +278,6 @@ public interface Reversible {
 			@Override
 			public Stream<T> inverse(Stream<R> in) {
 				return in.map(o -> wrap.inverse(o));
-			}
-
-			@Override
-			public Predicate<Stream<T>> domain() {
-				return t -> true;
-			}
-
-			@Override
-			public Predicate<Stream<R>> range() {
-				return t -> true;
 			}
 		};	
 	}
