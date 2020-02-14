@@ -115,7 +115,7 @@ public class TestDynamicBeanConverter {
 			SOMEBEAN_STREAM, 
 			SOMEBEAN_STREAM.reverse());
 	
-	static ReversibleFunction<FieldAtom, TypedAtom<String, Object>> FIELD_TO_MAP_ENTRY = Reversible.of(
+	static ReversibleFunction<FieldAtom, TypedAtom<String, Object>> FIELD_TO_MAP_ENTRY = Reversible.function(
 		fi -> TypedAtom.of(fi.getProperty().getName(), fi.getValue()),
 		me -> FieldAtom.of(null, getField(me.getProperty()), me.getValue()));
 
@@ -159,7 +159,7 @@ public class TestDynamicBeanConverter {
 	
 	
 	static ReversibleFunction<FieldAtom, IntAtom<Object>> namesToOrdinalFields(List<String> columns) {
-		return Reversible.of(
+		return Reversible.function(
 			fi -> IntAtom.of(columns.indexOf(fi.getProperty().getName()), fi.getValue()),
 			da -> FieldAtom.of(null, getField(columns.get(da.getProperty())), da.getValue()));
 	}
@@ -183,7 +183,7 @@ public class TestDynamicBeanConverter {
 		
 	ReversibleFunction<List<SomeBean>, Table> beansToTable(List<String> columns) {
 		
-		return Reversible.of(
+		return Reversible.function(
 				lsb -> new Table(columns, beansToListList(columns).apply(lsb)),
 				t -> beansToListList(columns).inverse(t.values));
 	}

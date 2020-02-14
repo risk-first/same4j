@@ -33,7 +33,7 @@ public abstract class AbstractInvariant<A,B> implements Invariant<A, B> {
 
 	@Override
 	public Invariant<A, B> use(Function<A, B> aToB, Function<B, A> bToA) {
-		f = Reversible.of(aToB, bToA);
+		f = Reversible.function(aToB, bToA);
 		return this;
 	}
 

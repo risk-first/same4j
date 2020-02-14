@@ -3,7 +3,9 @@ package org.riskfirst.same.same4j.invariant;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.riskfirst.same.same4j.reversible.Reversible;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
+import org.riskfirst.same.same4j.reversible.types.Objects;
 
 
 public class TestSimpleGetterSetterInvariants {
@@ -13,6 +15,22 @@ public class TestSimpleGetterSetterInvariants {
 		Invariant<TestObject1, TestObject2> i = Invariant.with(TestObject1.class, TestObject2.class);
 		ReversibleFunction<TestObject1, TestObject2> f = i.exist().build();
 		Assert.assertTrue(f.apply(new TestObject1()) instanceof TestObject2);
+	}
+	
+	@Test
+	public void testOperations() {
+		ReversibleFunction<TestObject1, TestObject2> f = 
+			Objects.shallow(TestObject1.class, TestObject2.class);
+		
+		f = f.combine(Reversible.consumer(
+			(o1, o2) -> o2.setD(o1.getA()), 
+			(o2, o1) -> o1.setA(o2.getD())));
+				
+		TestObject1 to1 = new TestObject1("a", null, null);
+		TestObject2 to2 = new TestObject2("a", null, null);
+		
+		Assert.assertEquals(to2, f.apply(to1));
+		Assert.assertEquals(to1, f.inverse(to2));
 	}
 	
 	@Test

@@ -10,7 +10,7 @@ import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 public class Numbers {
 
 	public static ReversibleFunction<String, Integer> STRING_TO_INTEGER = Reversible.allows(
-			Reversible.of(
+			Reversible.function(
 					s -> Integer.parseInt(s), 
 					i -> i.toString()), 
 			s -> s.matches("^[-+]?\\d+$"),

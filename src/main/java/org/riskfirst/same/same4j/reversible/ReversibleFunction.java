@@ -14,6 +14,20 @@ public interface ReversibleFunction<T, R> extends Function<T, R> {
 	public T inverse(R r);
 	
 	/**
+	 * Says whether apply() will work for its argument.
+	 */
+	public default Predicate<T> domain() {
+		return t -> true;
+	}
+	
+	/**
+	 * Says whether inverse() will work for its argument.
+	 */
+	public default Predicate<R> range() {
+		return t -> true;
+	}
+
+	/**
 	 * Short-hand for {@link Reversible.include}
 	 */
 	public default ReversibleFunction<T, R> allows(Predicate<T> domain, Predicate<R> range) {
@@ -29,7 +43,7 @@ public interface ReversibleFunction<T, R> extends Function<T, R> {
 	}
 	
 	/**
-	 * Short-hand for Same.combine. 
+	 * Short-hand for Reversible.combine. 
 	 * Doesn't always seem to compile correctly when called though.
 	 */
 	public default <S> ReversibleFunction<T, S> append(ReversibleFunction<R, S> f) {
@@ -37,28 +51,23 @@ public interface ReversibleFunction<T, R> extends Function<T, R> {
 	}
 	
 	/**
-	 * Short-hand for Same.reverse. 
+	 * Short-hand for Reversible.reverse. 
 	 * Doesn't always seem to compile correctly when called though.
 	 */
 	public default ReversibleFunction<R, T> reverse() {
 		return Reversible.reverse(this);
 	}
 	
-	/**
-	 * Says whether apply() will work for its argument.
-	 */
-	public default Predicate<T> domain() {
-		return t -> true;
-	}
 	
-	/**
-	 * Says whether inverse() will work for its argument.
-	 */
-	public default Predicate<R> range() {
-		return t -> true;
-	}
-
 	public default ReversibleFunction<T, R> guard() {
 		return Reversible.guard(this);
+	}
+	
+	public default ReversibleFunction<T, R> combine(ReversibleConsumer<T, R> c) {
+		return Reversible.combine(this, c);
+	}
+	
+	public default ReversibleFunction<T, R> combine(ReversibleConsumer<T, R>... c) {
+		return Reversible.combine(this, c);
 	}
 }

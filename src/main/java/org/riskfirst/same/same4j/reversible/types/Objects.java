@@ -23,7 +23,7 @@ public class Objects {
 	 * Identity relationship, where the in matches the out.
 	 */
 	public static <A> ReversibleFunction<A, A> identity() {
-		return Reversible.of(
+		return Reversible.function(
 			a -> a,
 			b -> b);
 	}
@@ -35,7 +35,7 @@ public class Objects {
 			Supplier<A> ca, 
 			Supplier<B> cb) {
 		
-		return Reversible.of(
+		return Reversible.function(
 			a -> a != null ? cb.get() : null,
 			b -> b != null ? ca.get() : null);
 	}

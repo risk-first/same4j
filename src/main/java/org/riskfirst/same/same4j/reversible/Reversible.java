@@ -1,5 +1,8 @@
 package org.riskfirst.same.same4j.reversible;
 
+import java.util.Arrays;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -18,7 +21,7 @@ public interface Reversible {
 	/**
 	 * Builds a reversible function.
 	 */
-	public static <T, R> ReversibleFunction<T, R> of(
+	public static <T, R> ReversibleFunction<T, R> function(
 		Function<T, R> out,
 		Function<R, T> back) {
 		
@@ -286,9 +289,86 @@ public interface Reversible {
 		ReversibleFunction<T, R> start,
 		ReversibleConsumer<T, R> then) {
 			
-		return start;
-		
-		
+		return new ReversibleFunction<T, R>() {
+
+			@Override
+			public R apply(T t) {
+				R out = start.apply(t);
+				then.accept(t, out);
+				return out;
+			}
+
+			@Override
+			public T inverse(R r) {
+				T out = start.inverse(r);
+				then.inverse(r, out);
+				return out;
+			}
+
+			@Override
+			public Predicate<T> domain() {
+				return start.domain();
+			}
+
+			@Override
+			public Predicate<R> range() {
+				return start.range();
+			}
+		};
+	}
+	
+	static <X, Y> void forEach(X[] xa, Consumer<X> y) {
+		for (X x : xa) {
+			y.accept(x);
+		}
+	}
+	
+	@SafeVarargs
+	public static <T, R> ReversibleFunction<T, R> combine(
+		ReversibleFunction<T, R> start,
+		ReversibleConsumer<T, R>... then) {
+			
+		return new ReversibleFunction<T, R>() {
+
+			@Override
+			public R apply(T t) {
+				R out = start.apply(t);
+				forEach(then, e -> e.accept(t, out));
+				return out;
+			}
+
+			@Override
+			public T inverse(R r) {
+				T out = start.inverse(r);
+				forEach(then, e -> e.inverse(r, out));
+				return out;
+			}
+
+			@Override
+			public Predicate<T> domain() {
+				return start.domain();
+			}
+
+			@Override
+			public Predicate<R> range() {
+				return start.range();
+			}
+		};
 	}
  
+	public static <T, U> ReversibleConsumer<T, U> consumer(BiConsumer<T, U> out, BiConsumer<U, T> back) {
+		return new ReversibleConsumer<T, U>() {
+
+			@Override
+			public void accept(T t, U u) {
+				out.accept(t, u);
+			}
+
+			@Override
+			public void inverse(U u, T t) {
+				back.accept(u, t);
+			}
+			
+		};
+	}
 }
