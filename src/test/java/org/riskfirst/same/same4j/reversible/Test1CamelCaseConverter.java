@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.riskfirst.same.same4j.Reversible;
 import org.riskfirst.same.same4j.Same4JException;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 

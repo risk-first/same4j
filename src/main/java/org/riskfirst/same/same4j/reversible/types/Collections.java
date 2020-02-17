@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.riskfirst.same.same4j.Reversible;
 import org.riskfirst.same.same4j.atom.Atom;
 import org.riskfirst.same.same4j.atom.IntAtom;
-import org.riskfirst.same.same4j.reversible.Reversible;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 
 public class Collections {

@@ -5,8 +5,8 @@ import java.util.function.Function;
 import org.riskfirst.same.same4j.builder.AbstractBaseInvariant;
 import org.riskfirst.same.same4j.builder.Label;
 import org.riskfirst.same.same4j.builder.ReversibleExpectation;
+import org.riskfirst.same.same4j.hierarchy.Prop;
 import org.riskfirst.same.same4j.reversible.types.Objects;
-import org.riskfirst.same.same4j.reversible.types.Beans.Prop;
 
 public class BBBaseInvariant<A, B> extends AbstractBaseInvariant<A, B> {
 		

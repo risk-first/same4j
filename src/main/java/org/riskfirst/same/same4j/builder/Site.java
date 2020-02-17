@@ -2,8 +2,8 @@ package org.riskfirst.same.same4j.builder;
 
 import java.util.function.Function;
 
+import org.riskfirst.same.same4j.hierarchy.Prop;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
-import org.riskfirst.same.same4j.reversible.types.Beans.Prop;
 
 /**
  * Allows you to declare things are the same

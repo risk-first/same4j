@@ -1,11 +1,11 @@
-package org.riskfirst.same.same4j.invariant;
+package org.riskfirst.same.same4j.hierarchy;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.riskfirst.same.same4j.reversible.Reversible;
-import org.riskfirst.same.same4j.reversible.ReversibleConsumer;
+import org.riskfirst.same.same4j.Reversible;
+import org.riskfirst.same.same4j.hierarchy.ReversibleConsumer;
+import org.riskfirst.same.same4j.hierarchy.types.Beans;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
-import org.riskfirst.same.same4j.reversible.types.Beans;
 import org.riskfirst.same.same4j.reversible.types.Objects;
 
 public class Test1Beans {
@@ -15,9 +15,9 @@ public class Test1Beans {
 		ReversibleFunction<TestObject1, TestObject2> f = 
 				Objects.shallow(TestObject1.class, TestObject2.class);
 		
-		ReversibleConsumer<TestObject1, TestObject2> getOp = Beans.of(
-				Beans.prop(a -> a.getA(), (a, b) -> a.setA(b)),
-				Beans.prop(a -> a.getD(), (a, b) -> a.setD(b)),
+		ReversibleConsumer<TestObject1, TestObject2> getOp = Reversible.of(
+				Prop.of(a -> a.getA(), (a, b) -> a.setA(b)),
+				Prop.of(a -> a.getD(), (a, b) -> a.setD(b)),
 				Objects.identity());
 		
 		f = f.combine(getOp);
@@ -34,7 +34,7 @@ public class Test1Beans {
 		ReversibleFunction<TestObject1, TestObject2> f = 
 				Objects.shallow(TestObject1.class, TestObject2.class);
 		
-		ReversibleConsumer<TestObject1, TestObject2> getOp = Beans.of(
+		ReversibleConsumer<TestObject1, TestObject2> getOp = Reversible.of(
 				Beans.prop(TestObject1.class, "a"),
 				Beans.prop(TestObject2.class, "d"),
 				Objects.identity());

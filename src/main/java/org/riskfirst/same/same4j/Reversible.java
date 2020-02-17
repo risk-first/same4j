@@ -1,4 +1,4 @@
-package org.riskfirst.same.same4j.reversible;
+package org.riskfirst.same.same4j;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -7,7 +7,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.riskfirst.same.same4j.Same4JException;
+import org.riskfirst.same.same4j.hierarchy.Prop;
+import org.riskfirst.same.same4j.hierarchy.ReversibleConsumer;
+import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 
 /**
  * Marker interface for all reversible computations.
@@ -403,6 +405,36 @@ public interface Reversible {
 			}
 			
 		};
+	}
+
+	/**
+	 * Constructs a ReversibleConsumer using two props and a function.
+	 */
+	static <A, B, R, T> ReversibleConsumer<A, B> of(Prop<A, R> propOnA, Prop<B, T> propOnB,
+			ReversibleFunction<R, T> rf) {
+	
+		return new ReversibleConsumer<A, B>() {
+	
+			@Override 
+			public void accept(A t, B u) {
+				if (t != null) {
+					R in = propOnA.get(t);
+					T out = rf.apply(in);
+					propOnB.set(u, out);
+				}
+			}
+	
+			@Override
+			public void inverse(B u, A t) {
+				if (u != null) {
+					T in = propOnB.get(u);
+					R out = rf.inverse(in);
+					propOnA.set(t, out);
+				}
+			}
+	
+		};
+	
 	}
 	
 }

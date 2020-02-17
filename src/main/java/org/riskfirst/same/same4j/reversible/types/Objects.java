@@ -2,7 +2,7 @@ package org.riskfirst.same.same4j.reversible.types;
 
 import java.util.function.Supplier;
 
-import org.riskfirst.same.same4j.reversible.Reversible;
+import org.riskfirst.same.same4j.Reversible;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 
 public class Objects {

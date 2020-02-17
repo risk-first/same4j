@@ -6,8 +6,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.riskfirst.same.same4j.Reversible;
 import org.riskfirst.same.same4j.atom.TypedAtom;
-import org.riskfirst.same.same4j.reversible.Reversible;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 
 /**

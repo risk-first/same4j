@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import org.riskfirst.same.same4j.Reversible;
 import org.riskfirst.same.same4j.Same4JException;
-import org.riskfirst.same.same4j.reversible.Reversible;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 import org.riskfirst.same.same4j.reversible.types.Objects;
 

@@ -3,6 +3,9 @@ package org.riskfirst.same.same4j.reversible;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.riskfirst.same.same4j.Reversible;
+import org.riskfirst.same.same4j.hierarchy.ReversibleConsumer;
+
 /**
  * Describes a category of functions for which there is an inverse() operation such that
  * a == inverse(apply(a)) over the entire domain of the function.

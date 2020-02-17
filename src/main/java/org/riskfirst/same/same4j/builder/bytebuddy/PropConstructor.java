@@ -2,8 +2,8 @@ package org.riskfirst.same.same4j.builder.bytebuddy;
 
 import java.lang.reflect.Method;
 
-import org.riskfirst.same.same4j.reversible.types.Beans;
-import org.riskfirst.same.same4j.reversible.types.Beans.Prop;
+import org.riskfirst.same.same4j.hierarchy.Prop;
+import org.riskfirst.same.same4j.hierarchy.types.Beans;
 
 class PropConstructor {
 	

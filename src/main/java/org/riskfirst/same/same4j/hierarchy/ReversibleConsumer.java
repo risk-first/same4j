@@ -1,4 +1,4 @@
-package org.riskfirst.same.same4j.reversible;
+package org.riskfirst.same.same4j.hierarchy;
 
 import java.util.function.BiConsumer;
 

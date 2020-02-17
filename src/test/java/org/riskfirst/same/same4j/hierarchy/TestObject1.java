@@ -1,11 +1,11 @@
-package org.riskfirst.same.same4j.invariant;
+package org.riskfirst.same.same4j.hierarchy;
 
 import java.util.List;
 
 public class TestObject1 {
 	
-	private String a, b;
-	private List<String> c;
+	String a, b;
+	List<String> c;
 
 	public TestObject1() {
 		super();

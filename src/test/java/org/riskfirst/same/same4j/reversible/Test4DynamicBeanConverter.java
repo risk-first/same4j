@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.riskfirst.same.same4j.Reversible;
 import org.riskfirst.same.same4j.atom.FieldAtom;
 import org.riskfirst.same.same4j.atom.IntAtom;
 import org.riskfirst.same.same4j.atom.TypedAtom;

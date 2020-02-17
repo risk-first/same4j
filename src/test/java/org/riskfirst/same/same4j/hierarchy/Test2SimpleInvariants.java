@@ -1,4 +1,4 @@
-package org.riskfirst.same.same4j.invariant;
+package org.riskfirst.same.same4j.hierarchy;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,6 +46,28 @@ public class Test2SimpleInvariants {
 		ReversibleFunction<TestObject1, TestObject2> f = 
 			Same.with(TestObject1.class, TestObject2.class)
 				.and(a -> a.getA(), b -> b.getD())
+				.use(a -> a.toUpperCase(), 
+						  b -> b.toLowerCase())
+				.rootDone();
+		
+		TestObject1 from = new TestObject1("a", null, null);
+		TestObject2 to = new TestObject2("A", null, null);
+	
+		TestObject2 toA = f.apply(from);
+		Assert.assertEquals(to, toA);
+		TestObject1 fromA = f.inverse(to);
+		Assert.assertEquals(from, fromA);
+		
+		// should also be null-safe
+		Assert.assertEquals(null, f.apply(null));
+	}
+	
+	@Test
+	public void testOb1Ob2FieldNavigation() {
+		
+		ReversibleFunction<TestObject1, TestObject2> f = 
+			Same.with(TestObject1.class, TestObject2.class)
+				.and(Prop.of(a -> a.a, (a, v) -> a.a = v), Prop.of(b -> b.d, (b,v) -> b.d = v))
 				.use(a -> a.toUpperCase(), 
 						  b -> b.toLowerCase())
 				.rootDone();

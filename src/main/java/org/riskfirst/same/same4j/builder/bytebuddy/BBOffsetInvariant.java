@@ -5,7 +5,7 @@ import java.util.function.Function;
 import org.riskfirst.same.same4j.builder.AbstractBaseInvariant;
 import org.riskfirst.same.same4j.builder.AbstractOffsetInvariant;
 import org.riskfirst.same.same4j.builder.ReversibleExpectation;
-import org.riskfirst.same.same4j.reversible.types.Beans.Prop;
+import org.riskfirst.same.same4j.hierarchy.Prop;
 
 public class BBOffsetInvariant<A, B> extends AbstractOffsetInvariant<A, B>{
 

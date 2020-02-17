@@ -3,8 +3,8 @@ package org.riskfirst.same.same4j.reversible.types;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
+import org.riskfirst.same.same4j.Reversible;
 import org.riskfirst.same.same4j.Same4JException;
-import org.riskfirst.same.same4j.reversible.Reversible;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 
 public class Numbers {

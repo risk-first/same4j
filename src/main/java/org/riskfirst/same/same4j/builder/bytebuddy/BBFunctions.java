@@ -1,5 +1,7 @@
 package org.riskfirst.same.same4j.builder.bytebuddy;
 
+import java.lang.instrument.Instrumentation;
+
 import org.riskfirst.same.same4j.Same4JException;
 
 import net.bytebuddy.ByteBuddy;
@@ -10,6 +12,11 @@ import net.bytebuddy.matcher.ElementMatchers;
 public class BBFunctions {
 
 	static ByteBuddy bb = new ByteBuddy();
+	
+	public static void premain(String args, Instrumentation instrumentation) {
+
+        System.out.println("Premain");
+    }
 	
 	public static <X> X buildInvariant(Class<X> ca, PropConstructor pc) throws Same4JException {
 		try {

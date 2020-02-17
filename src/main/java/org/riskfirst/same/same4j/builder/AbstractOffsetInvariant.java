@@ -1,10 +1,9 @@
 package org.riskfirst.same.same4j.builder;
 
-import org.riskfirst.same.same4j.reversible.Reversible;
-import org.riskfirst.same.same4j.reversible.ReversibleConsumer;
+import org.riskfirst.same.same4j.Reversible;
+import org.riskfirst.same.same4j.hierarchy.Prop;
+import org.riskfirst.same.same4j.hierarchy.ReversibleConsumer;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
-import org.riskfirst.same.same4j.reversible.types.Beans;
-import org.riskfirst.same.same4j.reversible.types.Beans.Prop;
 
 public abstract class AbstractOffsetInvariant<A,B> extends AbstractBaseInvariant<A, B>{
 
@@ -23,7 +22,7 @@ public abstract class AbstractOffsetInvariant<A,B> extends AbstractBaseInvariant
 	@SuppressWarnings({"rawtypes","unchecked"})
 	public <C, D> ReversibleFunction<C,D> appendTo(ReversibleFunction<C,D> rf) {
 		ReversibleFunction out = done();
-		ReversibleConsumer c = Beans.of(pA, pB, out);
+		ReversibleConsumer c = Reversible.of(pA, pB, out);
 		return Reversible.combine(rf, c);
 	}
 

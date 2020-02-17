@@ -1,13 +1,10 @@
-package org.riskfirst.same.same4j.reversible.types;
+package org.riskfirst.same.same4j.hierarchy.types;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 import org.riskfirst.same.same4j.Same4JException;
-import org.riskfirst.same.same4j.reversible.ReversibleConsumer;
-import org.riskfirst.same.same4j.reversible.ReversibleFunction;
+import org.riskfirst.same.same4j.hierarchy.Prop;
 
 /**
  * Contains helper functions for dealing with Java Beans (i.e. getters and
@@ -17,58 +14,6 @@ import org.riskfirst.same.same4j.reversible.ReversibleFunction;
  *
  */
 public class Beans {
-
-	public interface Prop<O, P> {
-
-		public void set(O o, P p); 
-
-		public P get(O o);
-	
-	}
-
-	public static <A, B, R, T> ReversibleConsumer<A, B> of(Prop<A, R> propOnA, Prop<B, T> propOnB,
-			ReversibleFunction<R, T> rf) {
-
-		return new ReversibleConsumer<A, B>() {
-
-			@Override
-			public void accept(A t, B u) {
-				if (t != null) {
-					R in = propOnA.get(t);
-					T out = rf.apply(in);
-					propOnB.set(u, out);
-				}
-			}
-
-			@Override
-			public void inverse(B u, A t) {
-				if (u != null) {
-					T in = propOnB.get(u);
-					R out = rf.inverse(in);
-					propOnA.set(t, out);
-				}
-			}
-
-		};
-
-	}
-	
-	public static <O, P> Prop<O, P> prop(Function<O, P> getterOnO, BiConsumer<O, P> setterOnO) {
-
-		return new Prop<O, P>() {
-
-			@Override
-			public void set(O o, P p) {
-				setterOnO.accept(o, p);
-			}
-
-			@Override
-			public P get(O o) {
-				return getterOnO.apply(o);
-			}
-
-		};
-	}
 
 	private static <O> Method findMethod(String pattern, Class<O> c, int args) {
 		return Arrays.stream(c.getMethods())
