@@ -1,4 +1,4 @@
-package org.riskfirst.same.same4j.invariant.bytebuddy;
+package org.riskfirst.same.same4j.builder.bytebuddy;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;

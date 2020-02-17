@@ -1,4 +1,4 @@
-package org.riskfirst.same.same4j.invariant;
+package org.riskfirst.same.same4j.builder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,34 +9,24 @@ import org.riskfirst.same.same4j.reversible.Reversible;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 import org.riskfirst.same.same4j.reversible.types.Objects;
 
-public abstract class AbstractBaseInvariant<A,B> implements Invariant<A, B> {
+public abstract class AbstractBaseInvariant<A,B> implements Site<A, B> {
 
-	protected Class<A> cA;
-	protected Class<B> cB;
 	protected A a;
 	protected B b;
 	protected ReversibleFunction<A, B> f;
 	protected List<AbstractOffsetInvariant<?, ?>> children = new ArrayList<>();
 	
-	protected AbstractBaseInvariant(Class<A> cA, Class<B> cB) {
-		this.cA = cA;
-		this.cB = cB;
-	}
-	
-	@Override
-	public Invariant<A, B> exist() {
-		f = Objects.shallow(cA, cB);
-		return this;
+	protected AbstractBaseInvariant() {
 	}
 
 	@Override
-	public Invariant<A, B> use(Function<A, B> aToB, Function<B, A> bToA) {
+	public Site<A, B> use(Function<A, B> aToB, Function<B, A> bToA) {
 		f = Reversible.function(aToB, bToA);
 		return this;
 	}
 
 	@Override
-	public Invariant<A, B> use(ReversibleFunction<A, B> r) {
+	public Site<A, B> use(ReversibleFunction<A, B> r) {
 		f = r;
 		return this;
 	}
@@ -67,16 +57,19 @@ public abstract class AbstractBaseInvariant<A,B> implements Invariant<A, B> {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public Invariant<A, B> identical() {
-		if (cA == cB) {
-			f = (ReversibleFunction<A, B>) Objects.identity();
-		} else {
-			throw new Same4JException("Types not identical: "+cA+", "+cB);
-		}
+	public Site<A, B> identical() {
+		f = (ReversibleFunction<A, B>) Objects.identity();
 		return this;
 	}
 	
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Site<A, B> sameClass() {
+		f = (ReversibleFunction<A, B>) Objects.sameClass();
+		return this;
+	}
+
 	public void add(AbstractOffsetInvariant<?,?> i) {
 		children.add(i);
 	}
@@ -85,6 +78,11 @@ public abstract class AbstractBaseInvariant<A,B> implements Invariant<A, B> {
 	public Label label() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Site<?, ?> root() {
+		return this;
 	}
 
 	

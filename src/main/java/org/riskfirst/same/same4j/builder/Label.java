@@ -1,4 +1,4 @@
-package org.riskfirst.same.same4j.invariant;
+package org.riskfirst.same.same4j.builder;
 
 public interface Label {
 

@@ -1,4 +1,4 @@
-package org.riskfirst.same.same4j.invariant.bytebuddy;
+package org.riskfirst.same.same4j.builder.bytebuddy;
 
 import org.riskfirst.same.same4j.Same4JException;
 

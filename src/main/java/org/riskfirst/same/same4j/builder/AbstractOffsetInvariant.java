@@ -1,4 +1,4 @@
-package org.riskfirst.same.same4j.invariant;
+package org.riskfirst.same.same4j.builder;
 
 import org.riskfirst.same.same4j.reversible.Reversible;
 import org.riskfirst.same.same4j.reversible.ReversibleConsumer;
@@ -10,10 +10,10 @@ public abstract class AbstractOffsetInvariant<A,B> extends AbstractBaseInvariant
 
 	private Prop<?,A> pA;
 	private Prop<?, B> pB;
-	protected Invariant<?,?> parent;
+	protected Site<?,?> parent;
 	
-	protected AbstractOffsetInvariant(Class<A> cA, Prop<?,A> pA, Class<B> cB, Prop<?, B> pB, AbstractBaseInvariant<?, ?> parent) {
-		super(cA, cB);
+	protected AbstractOffsetInvariant(Prop<?,A> pA, Prop<?, B> pB, AbstractBaseInvariant<?, ?> parent) {
+		super();
 		this.parent = parent;
 		this.pA = pA;
 		this.pB = pB;
@@ -27,4 +27,9 @@ public abstract class AbstractOffsetInvariant<A,B> extends AbstractBaseInvariant
 		return Reversible.combine(rf, c);
 	}
 
+	@Override
+	public Site<?, ?> root() {
+		return parent.root();
+	}
+	
 }

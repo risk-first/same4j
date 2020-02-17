@@ -17,6 +17,15 @@ public class Objects {
 	}
 
 	/**
+	 * Classes are the same, instances are different.
+	 */
+	public static <A> ReversibleFunction<A, A> sameClass() {
+		return Reversible.name(Reversible.function(
+				a -> a == null ? null : Reflection.newInstanceNoArgs(a.getClass()),
+				b -> b == null ? null : Reflection.newInstanceNoArgs(b.getClass())), "sameClass");
+	}
+	
+	/**
 	 * Returns an object if there is one present, otherwise returns null.
 	 */
 	public static <A, B> ReversibleFunction<A, B> existence(

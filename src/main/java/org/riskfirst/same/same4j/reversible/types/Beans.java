@@ -33,16 +33,20 @@ public class Beans {
 
 			@Override
 			public void accept(A t, B u) {
-				R in = propOnA.get(t);
-				T out = rf.apply(in);
-				propOnB.set(u, out);
+				if (t != null) {
+					R in = propOnA.get(t);
+					T out = rf.apply(in);
+					propOnB.set(u, out);
+				}
 			}
 
 			@Override
 			public void inverse(B u, A t) {
-				T in = propOnB.get(u);
-				R out = rf.inverse(in);
-				propOnA.set(t, out);
+				if (u != null) {
+					T in = propOnB.get(u);
+					R out = rf.inverse(in);
+					propOnA.set(t, out);
+				}
 			}
 
 		};
