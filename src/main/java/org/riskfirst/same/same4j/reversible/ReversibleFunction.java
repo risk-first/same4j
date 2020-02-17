@@ -70,4 +70,8 @@ public interface ReversibleFunction<T, R> extends Function<T, R> {
 	public default ReversibleFunction<T, R> combine(ReversibleConsumer<T, R>... c) {
 		return Reversible.combine(this, c);
 	}
+	
+	public default ReversibleFunction<T, R> named() {
+		return Reversible.name(this, "toString");
+	}
 }

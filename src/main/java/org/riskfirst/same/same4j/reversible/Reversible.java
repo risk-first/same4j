@@ -1,6 +1,5 @@
 package org.riskfirst.same.same4j.reversible;
 
-import java.util.Arrays;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -19,6 +18,41 @@ import org.riskfirst.same.same4j.Same4JException;
 public interface Reversible {
 
 	/**
+	 * Adds a name to the function
+	 */
+	public static <T, R> ReversibleFunction<T, R> name(ReversibleFunction<T, R> in, String name) {
+		
+		return new ReversibleFunction<T, R>() {
+
+			@Override
+			public R apply(T t) {
+				return in.apply(t);
+			}
+
+			@Override
+			public T inverse(R r) {
+				return in.inverse(r);
+			}
+
+			@Override
+			public Predicate<T> domain() {
+				return in.domain();
+			}
+
+			@Override
+			public Predicate<R> range() {
+				return in.range();
+			}
+
+			@Override
+			public String toString() {
+				return name;
+			}
+		};
+		
+	}
+	
+	/**
 	 * Builds a reversible function.
 	 */
 	public static <T, R> ReversibleFunction<T, R> function(
@@ -36,8 +70,7 @@ public interface Reversible {
 			public T inverse(R in) {
 				return back.apply(in);
 			}
-		};
-		
+		};	
 	}
 
 	/**
@@ -371,4 +404,5 @@ public interface Reversible {
 			
 		};
 	}
+	
 }

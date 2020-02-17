@@ -14,7 +14,7 @@ import org.riskfirst.same.same4j.reversible.types.Maps;
 import org.riskfirst.same.same4j.reversible.types.Numbers;
 import org.riskfirst.same.same4j.reversible.types.Objects;
 
-public class TestSimpleBeanConversion {
+public class Test3SimpleBeanConversion {
 
 	public static class TestBean1 {
 		 

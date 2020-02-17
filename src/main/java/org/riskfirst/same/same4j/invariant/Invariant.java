@@ -2,6 +2,7 @@ package org.riskfirst.same.same4j.invariant;
 
 import java.util.function.Function;
 
+import org.riskfirst.same.same4j.invariant.bytebuddy.BBBaseInvariant;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 
 /**
@@ -24,8 +25,12 @@ public interface Invariant<A, B> extends ReversibleExpectation<A, B> {
 
 
 	public static <A, B> Invariant<A, B> with(Class<A> a, Class<B> b) {
-		return new BBInvariant<>(null, a, b);
+		return new BBBaseInvariant<>(a, b);
 	}
 
-	public ReversibleFunction<A, B> build();
+	/**
+	 * Returns the reversible function set at this level.
+	 */
+	public ReversibleFunction<A, B> done();
+	
 }

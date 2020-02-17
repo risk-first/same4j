@@ -14,9 +14,9 @@ import org.riskfirst.same.same4j.atom.IntAtom;
 import org.riskfirst.same.same4j.atom.TypedAtom;
 import org.riskfirst.same.same4j.reversible.types.Collections;
 import org.riskfirst.same.same4j.reversible.types.Maps;
-import org.riskfirst.same.same4j.reversible.types.Objects;
+import org.riskfirst.same.same4j.reversible.types.Reflection;
 
-public class TestDynamicBeanConverter {
+public class Test4DynamicBeanConverter {
 	
 	static class Table {
 		
@@ -109,7 +109,7 @@ public class TestDynamicBeanConverter {
 	}
 	
 	static ReversibleFunction<SomeBean, Stream<FieldAtom>> SOMEBEAN_STREAM = 
-		Objects.fieldStream(Objects.nonStatic(), SomeBean::new);
+		Reflection.fieldStream(Reflection.nonStatic(), SomeBean::new);
 
 	static ReversibleFunction<SomeBean, SomeBean> SOMEBEAN_COPY = Reversible.combine(
 			SOMEBEAN_STREAM, 

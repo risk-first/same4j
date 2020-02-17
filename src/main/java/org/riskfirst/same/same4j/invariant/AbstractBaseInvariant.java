@@ -9,18 +9,16 @@ import org.riskfirst.same.same4j.reversible.Reversible;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 import org.riskfirst.same.same4j.reversible.types.Objects;
 
-public abstract class AbstractInvariant<A,B> implements Invariant<A, B> {
+public abstract class AbstractBaseInvariant<A,B> implements Invariant<A, B> {
 
-	Class<A> cA;
-	Class<B> cB;
-	A a;
-	B b;
-	ReversibleFunction<A, B> f;
-	Invariant<?,?> parent;
-	List<Invariant<?, ?>> children = new ArrayList<>();
+	protected Class<A> cA;
+	protected Class<B> cB;
+	protected A a;
+	protected B b;
+	protected ReversibleFunction<A, B> f;
+	protected List<AbstractOffsetInvariant<?, ?>> children = new ArrayList<>();
 	
-	protected AbstractInvariant(Class<A> cA, Class<B> cB, Invariant<?, ?> parent) {
-		this.parent = parent;
+	protected AbstractBaseInvariant(Class<A> cA, Class<B> cB) {
 		this.cA = cA;
 		this.cB = cB;
 	}
@@ -54,10 +52,20 @@ public abstract class AbstractInvariant<A,B> implements Invariant<A, B> {
 	}
 
 	@Override
-	public ReversibleFunction<A, B> build() {
-		return f;
+	public ReversibleFunction<A, B> done() {
+		if (f == null) {
+			throw new Same4JException("Function not set on invariant");
+		}
+		
+		ReversibleFunction<A, B> out = f;
+		for (AbstractOffsetInvariant<?, ?> abstractInvariant : children) {
+			out = abstractInvariant.appendTo(out);
+		}
+		
+		return out;
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Invariant<A, B> identical() {
 		if (cA == cB) {
@@ -69,6 +77,15 @@ public abstract class AbstractInvariant<A,B> implements Invariant<A, B> {
 	}
 	
 	
+	public void add(AbstractOffsetInvariant<?,?> i) {
+		children.add(i);
+	}
+
+	@Override
+	public Label label() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	
 }

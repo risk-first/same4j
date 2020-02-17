@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.riskfirst.same.same4j.Same4JException;
 import org.riskfirst.same.same4j.reversible.ReversibleFunction;
 
-public class TestCamelCaseConverter {
+public class Test1CamelCaseConverter {
 	
 	static ReversibleFunction<String, Stream<CharSequence>> CAMEL_SPLITTER = Reversible.stream(
 		s -> Arrays.stream(s.split("(?=\\p{Upper})")),

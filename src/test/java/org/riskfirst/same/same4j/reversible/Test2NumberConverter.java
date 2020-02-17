@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.riskfirst.same.same4j.reversible.types.Numbers;
 
 
-public class TestNumberConverter {
+public class Test2NumberConverter {
 
 	@Test
 	public void testSimpleConversion() {
