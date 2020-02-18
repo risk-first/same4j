@@ -32,7 +32,7 @@ public class Test2SimpleInvariants {
 		ReversibleFunction<TestObject1, TestObject2> f = i.done();
 		
 		TestObject1 from = new TestObject1("a", null, null);
-		TestObject2 to = new TestObject2("a", null, null);
+		TestObject2 to = new TestObject2("a", null, null, null);
 		
 		TestObject2 toA = f.apply(from);
 		Assert.assertEquals(to, toA);
@@ -51,7 +51,7 @@ public class Test2SimpleInvariants {
 				.rootDone();
 		
 		TestObject1 from = new TestObject1("a", null, null);
-		TestObject2 to = new TestObject2("A", null, null);
+		TestObject2 to = new TestObject2("A", null, null, null);
 	
 		TestObject2 toA = f.apply(from);
 		Assert.assertEquals(to, toA);
@@ -73,7 +73,7 @@ public class Test2SimpleInvariants {
 				.rootDone();
 		
 		TestObject1 from = new TestObject1("a", null, null);
-		TestObject2 to = new TestObject2("A", null, null);
+		TestObject2 to = new TestObject2("A", null, null, null);
 	
 		TestObject2 toA = f.apply(from);
 		Assert.assertEquals(to, toA);

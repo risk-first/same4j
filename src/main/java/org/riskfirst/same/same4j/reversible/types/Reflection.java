@@ -64,7 +64,7 @@ public class Reflection {
 	}
 
 	public static <K> Collector<FieldAtom, List<FieldAtom>, K> rebuilder(Supplier<K> con) {
-		return Collections.atomCollector(con, a -> {
+		return Collections.atomCollector(a -> {
 			K out = con.get();
 			for (FieldAtom fi : a) {
 				try {

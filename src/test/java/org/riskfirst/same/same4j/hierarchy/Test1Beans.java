@@ -23,7 +23,7 @@ public class Test1Beans {
 		f = f.combine(getOp);
 		
 		TestObject1 to1 = new TestObject1("a", null, null);
-		TestObject2 to2 = new TestObject2("a", null, null);
+		TestObject2 to2 = new TestObject2("a", null, null, null);
 		
 		Assert.assertEquals(to2, f.apply(to1));
 		Assert.assertEquals(to1, f.inverse(to2));
@@ -42,7 +42,7 @@ public class Test1Beans {
 		f = f.combine(getOp);
 		
 		TestObject1 to1 = new TestObject1("a", null, null);
-		TestObject2 to2 = new TestObject2("a", null, null);
+		TestObject2 to2 = new TestObject2("a", null, null, null);
 		
 		Assert.assertEquals(to2, f.apply(to1));
 		Assert.assertEquals(to1, f.inverse(to2));
@@ -58,7 +58,7 @@ public class Test1Beans {
 			(o2, o1) -> o1.setA(o2.getD())));
 				
 		TestObject1 to1 = new TestObject1("a", null, null);
-		TestObject2 to2 = new TestObject2("a", null, null);
+		TestObject2 to2 = new TestObject2("a", null, null, null);
 		
 		Assert.assertEquals(to2, f.apply(to1));
 		Assert.assertEquals(to1, f.inverse(to2));

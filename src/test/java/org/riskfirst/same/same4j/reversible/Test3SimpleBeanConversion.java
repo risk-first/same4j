@@ -143,7 +143,7 @@ public class Test3SimpleBeanConversion {
 	
 	@Test
 	public void convertTestBean1ToTestBean2() {
-		Assert.assertTrue(TEST_BEAN_1_TO_2.equals(EXAMPLE1, EXAMPLE2));
+		Assert.assertTrue(TEST_BEAN_1_TO_2.idemEquals(EXAMPLE1, EXAMPLE2));
 		
 		String tb1 = EXAMPLE1.toString();
 		String tb2 = EXAMPLE2.toString();

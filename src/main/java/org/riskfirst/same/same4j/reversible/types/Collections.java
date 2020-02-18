@@ -24,7 +24,7 @@ public class Collections {
 	/**
 	 * Helper class that collects together all atoms for assembling into an object.
 	 */
-	public static <K, D extends Atom> Collector<D, List<D>, K> atomCollector(Supplier<K> con, Function<List<D>, K> finisher) {
+	public static <K, D extends Atom> Collector<D, List<D>, K> atomCollector(Function<List<D>, K> finisher) {
 		return Collector.of(
 			() -> new ArrayList<D>(100),
 			(l, d) -> l.add(d),
@@ -35,7 +35,7 @@ public class Collections {
 
 	public static <V> ReversibleFunction<List<V>, Stream<IntAtom<V>>> listToAtomStream(Supplier<List<V>> constructor) {
 	
-		Collector<IntAtom<V>, List<IntAtom<V>>, List<V>> collector = atomCollector(constructor, 
+		Collector<IntAtom<V>, List<IntAtom<V>>, List<V>> collector = atomCollector(
 				a -> {
 					int max = a.stream().mapToInt(d -> (Integer) d.getProperty()).max().orElse(-1);
 					List<V> out = constructor.get();

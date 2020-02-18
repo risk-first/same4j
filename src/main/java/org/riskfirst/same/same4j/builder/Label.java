@@ -1,6 +1,8 @@
 package org.riskfirst.same.same4j.builder;
 
-public interface Label {
+import java.util.stream.Stream;
+
+public interface Label<X> {
 
 	public int _int();
 	
@@ -15,4 +17,6 @@ public interface Label {
 	public long _long();
 	
 	public <K> K any();
+	
+	public Stream<X> stream();
 }

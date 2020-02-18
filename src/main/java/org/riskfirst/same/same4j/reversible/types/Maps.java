@@ -31,5 +31,4 @@ public class Maps {
 		return Reversible.stream(splitter, joiner);
 	}
 
-	//public <A, B> ReversibleFunction<A, B> create
 }

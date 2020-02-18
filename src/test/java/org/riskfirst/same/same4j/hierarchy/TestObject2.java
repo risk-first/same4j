@@ -3,19 +3,29 @@ package org.riskfirst.same.same4j.hierarchy;
 import java.util.List;
 
 public class TestObject2 {
-
-	String d, e;
-	List<Integer> f;
 	
+	String d, e;
+	int[] f;
+	List<String> g;
+	
+	public List<String> getG() {
+		return g;
+	}
+
+	public void setG(List<String> g) {
+		this.g = g;
+	}
+
 	public TestObject2() {
 		super();
 	}
 
-	public TestObject2(String d, String e, List<Integer> f) {
+	public TestObject2(String d, String e, int[] f, List<String> g) {
 		super();
 		this.d = d;
 		this.e = e;
 		this.f = f;
+		this.g = g;
 	}
 
 	public String getD() {
@@ -34,12 +44,12 @@ public class TestObject2 {
 		this.e = e;
 	}
 
-	public List<Integer> getF() {
-		return f;
+	public int getF(int n) {
+		return f[n];
 	}
 
-	public void setF(List<Integer> f) {
-		this.f = f;
+	public void setF(int i, int v) {
+		this.f[i] = v;
 	}
 
 	@Override
